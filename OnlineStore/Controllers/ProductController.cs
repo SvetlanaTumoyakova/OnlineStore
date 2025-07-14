@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using OnlineStore.Data.Repositories;
 using OnlineStore.Data.Repositories.Interfaces;
 using OnlineStore.Exeptions;
 using OnlineStore.Model;
@@ -25,9 +26,9 @@ public class ProductController : Controller
     [HttpGet("{id}")]
     public async Task<ActionResult> GetByIdAsync(int id)
     {
-        var productDetailsVM = await _productRepository.GetByIdAsync(id);
+        var product = await _productRepository.GetByIdAsync(id);
 
-        return Ok(productDetailsVM);
+        return Ok(product);
     }
 
     [HttpGet("{skip}/{take}")]
@@ -39,18 +40,10 @@ public class ProductController : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddAsync(ProductDto productDto)
+    public async Task<ActionResult> AddAsync(Product product)
     {
-        var validateResult = ValidationProductDto.Validate(productDto);
-
-        if (!validateResult.IsValid)
-        {
-            return BadRequest(validateResult);
-        }
-
         try
         {
-            var product = MapperProductDto.Map(productDto);
             await _productRepository.AddAsync(product);
         }
         catch (NotFoundException)

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OnlineStore.Data;
+using OnlineStore.Data.Repositories;
 using OnlineStore.Data.Repositories.Interfaces;
 using OnlineStore.Exeptions;
 using OnlineStore.Model;
@@ -41,8 +42,16 @@ namespace OnlineStore.Controllers
         [HttpPost]
         public async Task<ActionResult> AddAsync(ProductCategory product)
         {
-           await _productCategoryRepository.AddAsync(product);
-           return Created();
+            try
+            {
+                await _productCategoryRepository.AddAsync(product);
+            }
+            catch (NotFoundException)
+            {
+                throw;
+            }
+
+            return Created();
         }
 
         [HttpPut]
