@@ -41,7 +41,10 @@ namespace OnlineStore.Data.Repositories
         public async Task Update(ProductCategory updateProductCategory)
         {
             var productCategory = await GetByIdTrackingAsync(updateProductCategory.Id);
-            _dbContext.Remove(productCategory);
+            productCategory.Name = updateProductCategory.Name;
+            productCategory.Description = updateProductCategory.Description;
+
+            _dbContext.Update(productCategory);
             await _dbContext.SaveChangesAsync();
         }
         public async Task RemoveAsync(int id)

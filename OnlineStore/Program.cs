@@ -10,6 +10,7 @@ var connectionString = builder.Configuration.GetConnectionString("OnlineStoreCon
 builder.Services.AddDbContext<OnlineStoreDBContext>(options => options.UseNpgsql(connectionString));
 
 builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddControllers();
 
 var app = builder.Build();
