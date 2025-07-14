@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnlineStore.Data.Repositories.Interfaces;
+using OnlineStore.Exeptions;
 using OnlineStore.Model;
-using System.Threading.Tasks;
 
 namespace OnlineStore.Data.Repositories
 {
@@ -12,7 +12,7 @@ namespace OnlineStore.Data.Repositories
         {
             _dbContext = dbContext;
         }
-        public Task<List<ProductCategory>> GetAll()
+        public Task<List<ProductCategory>> GetAllAsync()
         {
             var productCategories = _dbContext.ProductCategories
                                                      .AsNoTracking()
@@ -20,7 +20,7 @@ namespace OnlineStore.Data.Repositories
             return productCategories;
         }
 
-        public Task<ProductCategory> GetById(int id)
+        public Task<ProductCategory> GetByIdAsync(int id)
         {
             var productCategories = _dbContext.ProductCategories
                              .AsNoTracking()
@@ -29,7 +29,9 @@ namespace OnlineStore.Data.Repositories
         }
         public async Task<ProductCategory> GetByIdTrackingAsync(int id)
         {
-            var productCategory = await _dbContext.ProductCategories.FirstOrDefaultAsync(productCategory => productCategory.Id == id);
+            var productCategory = await _dbContext.ProductCategories.FirstOrDefaultAsync(productCategory => productCategory.Id == id)??
+             throw new NotFoundException($"Entity {nameof(ProductCategory)} not found by id {id}");
+
             return productCategory;
         }
 
@@ -38,7 +40,7 @@ namespace OnlineStore.Data.Repositories
             await _dbContext.AddAsync(productCategory);
             await _dbContext.SaveChangesAsync();
         }
-        public async Task Update(ProductCategory updateProductCategory)
+        public async Task UpdateAsync(ProductCategory updateProductCategory)
         {
             var productCategory = await GetByIdTrackingAsync(updateProductCategory.Id);
             productCategory.Name = updateProductCategory.Name;
@@ -50,11 +52,12 @@ namespace OnlineStore.Data.Repositories
         public async Task RemoveAsync(int id)
         {
             var productCategory = await GetByIdTrackingAsync(id);
+
             _dbContext.ProductCategories.Remove(productCategory);
             await _dbContext.SaveChangesAsync();
         }
 
-        public Task<List<ProductCategory>> GetRange(int skip, int take)
+        public Task<List<ProductCategory>> GetRangeAsync(int skip, int take)
         {
             var productCategories = _dbContext.ProductCategories
                                                         .AsNoTracking()

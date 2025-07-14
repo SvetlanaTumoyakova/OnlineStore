@@ -12,7 +12,7 @@ namespace OnlineStore.Data.Repositories
         {
             _dbContext = dbContext;
         }
-        public Task<List<Product>> GetAll()
+        public Task<List<Product>> GetAllAsync()
         {
             var products = _dbContext.Products
                                             .AsNoTracking()
@@ -20,7 +20,7 @@ namespace OnlineStore.Data.Repositories
             return products;
         }
 
-        public Task<Product> GetById(int id)
+        public Task<Product> GetByIdAsync(int id)
         {
             var product = _dbContext.Products
                              .AsNoTracking()
@@ -38,7 +38,7 @@ namespace OnlineStore.Data.Repositories
             await _dbContext.AddAsync(product);
             await _dbContext.SaveChangesAsync();
         }
-        public async Task Update(Product updateProduct)
+        public async Task UpdateAsync(Product updateProduct)
         {
             var product = await GetByIdTrackingAsync(updateProduct.Id);
 
@@ -57,7 +57,7 @@ namespace OnlineStore.Data.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public Task<List<Product>> GetRange(int skip, int take)
+        public Task<List<Product>> GetRangeAsync(int skip, int take)
         {
             var products = _dbContext.Products
                                             .AsNoTracking()
