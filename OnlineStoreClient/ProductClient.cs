@@ -1,4 +1,5 @@
 ﻿using OnlineStore.Model;
+using OnlineStoreClient.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,9 +33,9 @@ namespace OnlineStore.Client
             return await _httpClient.GetFromJsonAsync<Product[]>($"api/products/{skip}/{take}");
         }
 
-        public async Task AddAsync(Product product)
+        public async Task AddAsync(ProductDto ProductDto)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/products", product);
+            var response = await _httpClient.PostAsJsonAsync("api/products", ProductDto);
             response.EnsureSuccessStatusCode();
         }
 

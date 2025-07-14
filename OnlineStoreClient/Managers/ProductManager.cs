@@ -1,5 +1,6 @@
 ﻿using OnlineStore.Client;
 using OnlineStore.Model;
+using OnlineStoreClient.Dto;
 
 namespace OnlineStoreClient.Managers
 {
@@ -81,19 +82,23 @@ namespace OnlineStoreClient.Managers
                 Console.Write("Введите название нового продукта: ");
                 var name = Console.ReadLine();
 
+                Console.Write("Введите описание нового продукта: ");
+                var description = Console.ReadLine();
+
                 Console.Write("Введите цену нового продукта: ");
                 var priceInput = Console.ReadLine();
 
                 if (decimal.TryParse(priceInput, out decimal price))
                 {
-                    var newProduct = new Product
+                    var newProductDto = new ProductDto
                     {
                         Name = name,
+                        Description = description,
                         Price = price,
                         ProductCategoryId = selectedCategory.Id,
                     };
 
-                    await _productClient.AddAsync(newProduct);
+                    await _productClient.AddAsync(newProductDto);
                     Console.WriteLine("Продукт добавлен.");
                 }
                 else
