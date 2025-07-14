@@ -10,6 +10,6 @@ namespace OnlineStore.Model
         public required decimal Price { get; set; }
 
         public required int ProductCategoryId { get; set; }
-        public required ProductCategory ProductCategory { get; set; }
+        public ProductCategory? ProductCategory { get; set; }
     }
 }

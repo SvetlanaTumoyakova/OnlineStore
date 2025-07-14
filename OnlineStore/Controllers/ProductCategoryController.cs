@@ -39,6 +39,7 @@ namespace OnlineStore.Controllers
 
             return Ok(productCategories);
         }
+
         [HttpPost]
         public async Task<ActionResult> AddAsync(ProductCategory product)
         {

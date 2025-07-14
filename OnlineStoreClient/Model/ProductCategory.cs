@@ -1,4 +1,6 @@
-﻿namespace OnlineStoreClient.Model
+﻿using OnlineStore.Model;
+
+namespace OnlineStoreClient.Model
 {
     public class ProductCategory
     {

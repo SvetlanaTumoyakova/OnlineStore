@@ -6,10 +6,11 @@ namespace OnlineStoreClient.Managers
     public class ProductManager
     {
         private readonly ProductClient _productClient;
-
-        public ProductManager(ProductClient productClient)
+        private readonly ProductCategoryClient _productCategoryClient;
+        public ProductManager(ProductClient productClient, ProductCategoryClient productCategoryClient)
         {
             _productClient = productClient;
+            _productCategoryClient = productCategoryClient;
         }
 
         public async Task RunAsync()
@@ -64,20 +65,46 @@ namespace OnlineStoreClient.Managers
 
         private async Task AddProductAsync()
         {
-            Console.Write("Введите название нового продукта: ");
-            var name = Console.ReadLine();
-            Console.Write("Введите цену нового продукта: ");
-            var priceInput = Console.ReadLine();
-
-            if (decimal.TryParse(priceInput, out decimal price))
+            var categories = await _productCategoryClient.GetAllAsync();
+            Console.WriteLine("Доступные категории:");
+            for (int i = 0; i < categories.Length; i++)
             {
-                var newProduct = new Product { Name = name, Price = price };
-                await _productClient.AddAsync(newProduct);
-                Console.WriteLine("Продукт добавлен.");
+                Console.WriteLine($"{i + 1}. {categories[i].Name} (ID: {categories[i].Id})");
+            }
+            Console.Write("Выберите категорию (введите номер): ");
+            var categoryChoiceInput = Console.ReadLine();
+            if (int.TryParse(categoryChoiceInput, out int categoryChoice) &&
+                    categoryChoice > 0 && categoryChoice <= categories.Length)
+            {
+                var selectedCategory = categories[categoryChoice - 1];
+
+                Console.Write("Введите название нового продукта: ");
+                var name = Console.ReadLine();
+
+                Console.Write("Введите цену нового продукта: ");
+                var priceInput = Console.ReadLine();
+
+                if (decimal.TryParse(priceInput, out decimal price))
+                {
+                    var newProduct = new Product
+                    {
+                        Name = name,
+                        Price = price,
+                        ProductCategoryId = selectedCategory.Id,
+                    };
+
+                    await _productClient.AddAsync(newProduct);
+                    Console.WriteLine("Продукт добавлен.");
+                }
+                else
+                {
+                    Console.WriteLine("Введенная цена некорректна. Пожалуйста, убедитесь," +
+                        "что вы вводите число в правильном формате (например, 123.45) и попробуйте снова.");
+                }
             }
             else
             {
-                Console.WriteLine("Неверная цена.");
+                Console.WriteLine("Неверный выбор. Такой категории не существует.");
             }
         }
 

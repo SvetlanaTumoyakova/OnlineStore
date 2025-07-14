@@ -16,7 +16,7 @@ namespace OnlineStore.ConsoleClient
             _productClient = new ProductClient(httpClient);
 
             var categoryManager = new CategoryManager(_productCategoryClient);
-            var productManager = new ProductManager(_productClient);
+            var productManager = new ProductManager(_productClient, _productCategoryClient);
 
             while (true)
             {
