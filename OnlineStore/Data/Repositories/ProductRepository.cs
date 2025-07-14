@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnlineStore.Data.Repositories.Interfaces;
+using OnlineStore.Exeptions;
 using OnlineStore.Model;
 using System.Threading.Tasks;
 
@@ -29,7 +30,9 @@ namespace OnlineStore.Data.Repositories
         }
         public async Task<Product> GetByIdTrackingAsync(int id)
         {
-            var product = await _dbContext.Products.FirstOrDefaultAsync(product => product.Id == id);
+            var product = await _dbContext.Products.FirstOrDefaultAsync(product => product.Id == id) ??
+             throw new NotFoundException($"Entity {nameof(ProductCategory)} not found by id {id}");
+
             return product;
         }
 
