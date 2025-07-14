@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OnlineStore.Data.Repositories;
 using OnlineStore.Data.Repositories.Interfaces;
+using OnlineStore.Dto;
 using OnlineStore.Exeptions;
+using OnlineStore.Mappers;
 using OnlineStore.Model;
+using OnlineStore.Validations;
 
 namespace OnlineStore.Controllers;
 
@@ -40,10 +43,18 @@ public class ProductController : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddAsync(Product product)
+    public async Task<ActionResult> AddAsync(ProductDto productDto)
     {
+        var validateResult = ValidationProductDto.Validate(productDto);
+
+        if (!validateResult.IsValid)
+        {
+            return BadRequest(validateResult);
+        }
+
         try
         {
+            var product = MapperProductDto.Map(productDto);
             await _productRepository.AddAsync(product);
         }
         catch (NotFoundException)
