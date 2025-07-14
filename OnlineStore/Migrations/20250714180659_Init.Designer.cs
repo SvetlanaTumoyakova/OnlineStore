@@ -11,7 +11,7 @@ using OnlineStore.Data;
 namespace OnlineStore.Migrations
 {
     [DbContext(typeof(OnlineStoreDBContext))]
-    [Migration("20250714165426_Init")]
+    [Migration("20250714180659_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -31,9 +31,6 @@ namespace OnlineStore.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");

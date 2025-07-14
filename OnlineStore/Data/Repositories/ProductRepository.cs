@@ -41,6 +41,11 @@ namespace OnlineStore.Data.Repositories
         public async Task Update(Product updateProduct)
         {
             var product = await GetByIdTrackingAsync(updateProduct.Id);
+            product.Name = updateProduct.Name;
+            product.Description = updateProduct.Description;
+            product.Price = updateProduct.Price;
+            product.ProductCategoryId = updateProduct.ProductCategoryId;
+
             _dbContext.Remove(product);
             await _dbContext.SaveChangesAsync();
         }

@@ -7,7 +7,7 @@
         public string? Description { get; set; }
         public required decimal Price { get; set; }
 
-        public required int CategoryId { get; set; }
+        public required int ProductCategoryId { get; set; }
         public required ProductCategory ProductCategory { get; set; }
     }
 }
