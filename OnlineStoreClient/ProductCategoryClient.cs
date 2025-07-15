@@ -1,4 +1,5 @@
 ﻿using OnlineStoreClient.Model;
+using System.Net;
 using System.Net.Http.Json;
 
 namespace OnlineStoreClient
@@ -30,7 +31,7 @@ namespace OnlineStoreClient
         public async Task AddAsync(ProductCategory productCategory)
         {
             var response = await _httpClient.PostAsJsonAsync("api/ProductCategory", productCategory);
-            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            if (response.StatusCode == HttpStatusCode.BadRequest)
             {
                 var productDetailsVM = await response.Content.ReadFromJsonAsync<ValidateResult>();
             }
@@ -38,7 +39,7 @@ namespace OnlineStoreClient
         public async Task UpdateAsync(ProductCategory productCategory)
         {
             var response = await _httpClient.PutAsJsonAsync("api/ProductCategory", productCategory);
-            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            if (response.StatusCode == HttpStatusCode.BadRequest)
             {
                 var productDetailsVM = await response.Content.ReadFromJsonAsync<ValidateResult>();
             }
@@ -46,7 +47,7 @@ namespace OnlineStoreClient
         public async Task RemoveAsync(int id)
         {
             var response = await _httpClient.DeleteAsync($"api/ProductCategory/{id}");
-            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            if (response.StatusCode == HttpStatusCode.BadRequest)
             {
                 var productDetailsVM = await response.Content.ReadFromJsonAsync<ValidateResult>();
             }
