@@ -1,5 +1,6 @@
 ﻿using OnlineStoreClient.Dto;
 using OnlineStoreClient.Model;
+using OnlineStoreClient.Validations;
 using OnlineStoreClient.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -37,18 +38,27 @@ namespace OnlineStoreClient
         public async Task AddAsync(ProductDto ProductDto)
         {
             var response = await _httpClient.PostAsJsonAsync("api/products", ProductDto);
-            response.EnsureSuccessStatusCode();
+            if(response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                var productDetailsVM = await response.Content.ReadFromJsonAsync<ValidateResult>();
+            }
         }
 
         public async Task UpdateAsync(ProductDto ProductDto)
         {
             var response = await _httpClient.PutAsJsonAsync("api/products", ProductDto);
-            response.EnsureSuccessStatusCode();
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                var productDetailsVM = await response.Content.ReadFromJsonAsync<ValidateResult>();
+            }
         }
         public async Task RemoveAsync(int id)
         {
             var response = await _httpClient.DeleteAsync($"api/products/{id}");
-            response.EnsureSuccessStatusCode();
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                var productDetailsVM = await response.Content.ReadFromJsonAsync<ValidateResult>();
+            }
         }
     }
 }

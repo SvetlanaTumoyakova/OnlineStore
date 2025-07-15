@@ -53,6 +53,13 @@ namespace OnlineStore.Data.Repositories
 
         public async Task AddAsync(Product product)
         {
+            var isExist = await _dbContext.ProductCategories.AnyAsync(productCategory => productCategory.Id == product.ProductCategoryId);
+
+            if (isExist)
+            {
+                throw new NotFoundException($"Entity {nameof(ProductCategory)} not found by id {id}");
+            }
+
             await _dbContext.AddAsync(product);
             await _dbContext.SaveChangesAsync();
         }
