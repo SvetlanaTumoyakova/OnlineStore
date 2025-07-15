@@ -1,5 +1,6 @@
-﻿using OnlineStore.Model;
-using OnlineStoreClient.Dto;
+﻿using OnlineStoreClient.Dto;
+using OnlineStoreClient.Model;
+using OnlineStoreClient.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OnlineStore.Client
+namespace OnlineStoreClient
 {
     public class ProductClient
     {
@@ -23,9 +24,9 @@ namespace OnlineStore.Client
             return await _httpClient.GetFromJsonAsync<Product[]>("api/products");
         }
 
-        public async Task<Product> GetByIdAsync(int id)
+        public async Task<ProductDetailsViewModel> GetByIdAsync(int id)
         {
-            return await _httpClient.GetFromJsonAsync<Product>($"api/products/{id}");
+            return await _httpClient.GetFromJsonAsync<ProductDetailsViewModel>($"api/products/{id}");
         }
 
         public async Task<Product[]> GetRangeAsync(int skip, int take)
@@ -39,9 +40,9 @@ namespace OnlineStore.Client
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task UpdateAsync(Product product)
+        public async Task UpdateAsync(ProductDto ProductDto)
         {
-            var response = await _httpClient.PutAsJsonAsync("api/products", product);
+            var response = await _httpClient.PutAsJsonAsync("api/products", ProductDto);
             response.EnsureSuccessStatusCode();
         }
         public async Task RemoveAsync(int id)

@@ -1,6 +1,5 @@
-﻿using OnlineStore.Client;
-using OnlineStore.Model;
-using OnlineStoreClient.Dto;
+﻿using OnlineStoreClient.Dto;
+using OnlineStoreClient.ViewModel;
 
 namespace OnlineStoreClient.Managers
 {
@@ -21,10 +20,11 @@ namespace OnlineStoreClient.Managers
                 Console.Clear();
                 Console.WriteLine("Выберите действие с продуктами:");
                 Console.WriteLine("1. Получить все продукты");
-                Console.WriteLine("2. Добавить продукт");
-                Console.WriteLine("3. Обновить продукт");
-                Console.WriteLine("4. Удалить продукт");
-                Console.WriteLine("5. Назад");
+                Console.WriteLine("2. Получить продукт по ID");
+                Console.WriteLine("3. Добавить продукт");
+                Console.WriteLine("4. Обновить продукт");
+                Console.WriteLine("5. Удалить продукт");
+                Console.WriteLine("6. Назад");
 
                 var choice = Console.ReadLine();
 
@@ -34,15 +34,18 @@ namespace OnlineStoreClient.Managers
                         await GetAllProductsAsync();
                         break;
                     case "2":
-                        await AddProductAsync();
+                        await GetProductByIdAsync();
                         break;
                     case "3":
-                        await UpdateProductAsync();
+                        await AddProductAsync();
                         break;
                     case "4":
-                        await RemoveProductAsync();
+                        await UpdateProductAsync();
                         break;
                     case "5":
+                        await RemoveProductAsync();
+                        break;
+                    case "6":
                         return;
                     default:
                         Console.WriteLine("Неверный выбор. Пожалуйста, попробуйте снова.");
@@ -61,6 +64,32 @@ namespace OnlineStoreClient.Managers
             foreach (var product in products)
             {
                 Console.WriteLine($"- ID: {product.Id}, Название: {product.Name}, Цена: {product.Price}");
+            }
+        }
+        private async Task GetProductByIdAsync()
+        {
+            Console.Write("Введите ID продукта: ");
+            if (int.TryParse(Console.ReadLine(), out int id))
+            {
+                ProductDetailsViewModel productDetails = await _productClient.GetByIdAsync(id);
+                if (productDetails != null)
+                {
+                    Console.WriteLine($"ID: {productDetails.Id}");
+                    Console.WriteLine($"Название: {productDetails.Name}");
+                    Console.WriteLine($"Описание: {productDetails.Description}");
+                    Console.WriteLine($"Цена: {productDetails.Price}");
+                    Console.WriteLine($"ID категории: {productDetails.productCategoryId}");
+                    Console.WriteLine($"Название категории: {productDetails.NameProductCategory}");
+                    Console.WriteLine($"Описание категории: {productDetails.DescriptionProductCategory}");
+                }
+                else
+                {
+                    Console.WriteLine("Продукт не найден.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Неверный ID.");
             }
         }
 
@@ -118,24 +147,32 @@ namespace OnlineStoreClient.Managers
             Console.Write("Введите ID продукта для обновления: ");
             if (int.TryParse(Console.ReadLine(), out int id))
             {
-                var product = await _productClient.GetByIdAsync(id);
-                if (product != null)
+                var productDetails = await _productClient.GetByIdAsync(id);
+                if (productDetails != null)
                 {
-                    Console.Write("Введите новое название продукта: ");
-                    product.Name = Console.ReadLine();
-                    Console.Write("Введите новую цену продукта: ");
-                    var priceInput = Console.ReadLine();
+                    var updatedProductDto = new ProductDto
+                    {
+                        Name = productDetails.Name,
+                        Description = productDetails.Description,
+                        Price = productDetails.Price,
+                        ProductCategoryId = productDetails.productCategoryId
+                    };
 
-                    if (decimal.TryParse(priceInput, out decimal price))
+                    Console.Write("Введите новое название продукта (оставьте пустым, чтобы не изменять): ");
+                    var newName = Console.ReadLine();
+                    if (!string.IsNullOrWhiteSpace(newName))
                     {
-                        product.Price = price;
-                        await _productClient.UpdateAsync(product);
-                        Console.WriteLine("Продукт обновлен.");
+                        updatedProductDto.Name = newName;
                     }
-                    else
+
+                    Console.Write("Введите новую цену продукта (оставьте пустым, чтобы не изменять): ");
+                    var priceInput = Console.ReadLine();
+                    if (decimal.TryParse(priceInput, out decimal newPrice))
                     {
-                        Console.WriteLine("Неверная цена.");
+                        updatedProductDto.Price = newPrice;
                     }
+                    await _productClient.UpdateAsync(updatedProductDto);
+                    Console.WriteLine("Продукт обновлен.");
                 }
                 else
                 {

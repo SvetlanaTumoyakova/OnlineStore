@@ -1,8 +1,7 @@
-﻿using OnlineStore.Client;
-using OnlineStoreClient.Managers;
+﻿using OnlineStoreClient.Managers;
 using System.Net.Http.Json;
 
-namespace OnlineStore.ConsoleClient
+namespace OnlineStoreClient
 {
     class Program
     {

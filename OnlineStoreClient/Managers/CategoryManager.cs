@@ -1,5 +1,4 @@
-﻿using OnlineStore.Client;
-using OnlineStoreClient.Model;
+﻿using OnlineStoreClient.Model;
 
 namespace OnlineStoreClient.Managers
 {

@@ -1,6 +1,4 @@
-﻿using OnlineStoreClient.Model;
-
-namespace OnlineStore.Model
+﻿namespace OnlineStoreClient.Model
 {
     public class Product
     {

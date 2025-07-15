@@ -1,7 +1,7 @@
 ﻿using OnlineStoreClient.Model;
 using System.Net.Http.Json;
 
-namespace OnlineStore.Client
+namespace OnlineStoreClient
 {
     public class ProductCategoryClient
     {

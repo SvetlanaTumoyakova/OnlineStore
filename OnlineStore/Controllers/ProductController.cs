@@ -29,9 +29,9 @@ public class ProductController : Controller
     [HttpGet("{id}")]
     public async Task<ActionResult> GetByIdAsync(int id)
     {
-        var product = await _productRepository.GetByIdAsync(id);
+        var productDetailsViewModel = await _productRepository.GetByIdAsync(id);
 
-        return Ok(product);
+        return Ok(productDetailsViewModel);
     }
 
     [HttpGet("{skip}/{take}")]
@@ -80,18 +80,36 @@ public class ProductController : Controller
         return NoContent();
     }
 
-    [HttpPut]
-    public async Task<ActionResult> UpdateAsync(Product product)
+    [HttpPut("{id}")]
+    public async Task<ActionResult<Product>> UpdateAsync(int id, ProductDto productDto)
     {
+        var validateResult = ValidationProductDto.Validate(productDto);
+        if (!validateResult.IsValid)
+        {
+            return BadRequest(validateResult);
+        }
+
         try
         {
+            var existingProduct = await _productRepository.GetByIdAsync(id);
+            if (existingProduct == null)
+            {
+                return NotFound("Продукт не найден.");
+            }
+
+            var product = MapperProductDto.Map(productDto);
+            product.Id = existingProduct.Id; 
+
             await _productRepository.UpdateAsync(product);
+            return Ok(product);
         }
         catch (NotFoundException)
         {
-            throw;
+            return NotFound("Продукт не найден.");
         }
-
-        return NoContent();
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Ошибка при обновлении продукта: {ex.Message}");
+        }
     }
 }

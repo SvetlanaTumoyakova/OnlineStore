@@ -2,6 +2,7 @@
 using OnlineStore.Data.Repositories.Interfaces;
 using OnlineStore.Exeptions;
 using OnlineStore.Model;
+using OnlineStoreClient.ViewModel;
 using System.Threading.Tasks;
 
 namespace OnlineStore.Data.Repositories
@@ -21,12 +22,23 @@ namespace OnlineStore.Data.Repositories
             return products;
         }
 
-        public async Task<Product> GetByIdAsync(int id)
+        public async Task<ProductDetailsViewModel> GetByIdAsync(int id)
         {
-            var product = await _dbContext.Products
+            var productDetailsViewModel = await _dbContext.Products
                              .AsNoTracking()
+                             .Include(product => product.ProductCategory)
+                             .Select(product => new ProductDetailsViewModel
+                             {
+                                Id = product.Id,
+                                Name = product.Name,
+                                Description = product.Description,
+                                Price = product.Price,
+                                productCategoryId = product.ProductCategoryId,
+                                NameProductCategory = product.ProductCategory.Name,
+                                DescriptionProductCategory = product.ProductCategory.Description
+                             })
                              .FirstOrDefaultAsync(product => product.Id == id);
-            return product;
+            return productDetailsViewModel;
         }
         public async Task<Product> GetByIdTrackingAsync(int id)
         {
