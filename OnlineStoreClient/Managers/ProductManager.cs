@@ -69,27 +69,42 @@ namespace OnlineStoreClient.Managers
         private async Task GetProductByIdAsync()
         {
             Console.Write("Введите ID продукта: ");
-            if (int.TryParse(Console.ReadLine(), out int id))
+            if (int.TryParse(Console.ReadLine(), out int id)) // Читаем ID от пользователя
             {
-                ProductDetailsViewModel productDetails = await _productClient.GetByIdAsync(id);
-                if (productDetails != null)
+                try
                 {
-                    Console.WriteLine($"ID: {productDetails.Id}");
-                    Console.WriteLine($"Название: {productDetails.Name}");
-                    Console.WriteLine($"Описание: {productDetails.Description}");
-                    Console.WriteLine($"Цена: {productDetails.Price}");
-                    Console.WriteLine($"ID категории: {productDetails.productCategoryId}");
-                    Console.WriteLine($"Название категории: {productDetails.NameProductCategory}");
-                    Console.WriteLine($"Описание категории: {productDetails.DescriptionProductCategory}");
+                    ProductDetailsViewModel productDetails = await _productClient.GetByIdAsync(id);
+
+                    if (productDetails != null)
+                    {
+                        Console.WriteLine($"Название: {productDetails.Name}");
+                        Console.WriteLine($"Описание: {productDetails.Description}");
+                        Console.WriteLine($"Цена: {productDetails.Price} руб."); 
+
+                        if (productDetails.CategoryViewModel != null)
+                        {
+                            Console.WriteLine($"ID категории: {productDetails.CategoryViewModel.ProductCategoryId}");
+                            Console.WriteLine($"Название категории: {productDetails.CategoryViewModel.NameProductCategory}");
+                            Console.WriteLine($"Описание категории: {productDetails.CategoryViewModel.DescriptionProductCategory}");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Информация о категории недоступна.");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Продукт не найден.");
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    Console.WriteLine("Продукт не найден.");
+                    Console.WriteLine($"Ошибка при получении продукта: {ex.Message}");
                 }
             }
             else
             {
-                Console.WriteLine("Неверный ID.");
+                Console.WriteLine("Некорректный ввод ID. Пожалуйста, введите числовое значение.");
             }
         }
 
@@ -155,7 +170,7 @@ namespace OnlineStoreClient.Managers
                         Name = productDetails.Name,
                         Description = productDetails.Description,
                         Price = productDetails.Price,
-                        ProductCategoryId = productDetails.productCategoryId
+                        ProductCategoryId = productDetails.CategoryViewModel.ProductCategoryId
                     };
 
                     Console.Write("Введите новое название продукта (оставьте пустым, чтобы не изменять): ");

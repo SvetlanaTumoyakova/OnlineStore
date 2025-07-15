@@ -13,8 +13,13 @@ namespace OnlineStoreClient.ViewModel
         public required string Description { get; set; }
         public required decimal Price { get; set; }
 
-        public required int productCategoryId { get; set; }
-        public required string? NameProductCategory { get; set; }
-        public required string? DescriptionProductCategory { get; set; }
+        public required ProductDetailsCategoryViewModel CategoryViewModel { get; set; }
+    }
+
+    public class ProductDetailsCategoryViewModel
+    {
+        public required int ProductCategoryId { get; set; }
+        public required string NameProductCategory { get; set; }
+        public required string DescriptionProductCategory { get; set; }
     }
 }

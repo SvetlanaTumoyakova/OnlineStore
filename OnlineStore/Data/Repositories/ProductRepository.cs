@@ -33,9 +33,12 @@ namespace OnlineStore.Data.Repositories
                                 Name = product.Name,
                                 Description = product.Description,
                                 Price = product.Price,
-                                productCategoryId = product.ProductCategoryId,
-                                NameProductCategory = product.ProductCategory.Name,
-                                DescriptionProductCategory = product.ProductCategory.Description
+                                CategoryViewModel = new ProductDetailsCategoryViewModel
+                                {
+                                    ProductCategoryId = product.ProductCategoryId,
+                                    NameProductCategory = product.ProductCategory.Name,
+                                    DescriptionProductCategory = product.ProductCategory.Description
+                                }
                              })
                              .FirstOrDefaultAsync(product => product.Id == id);
             return productDetailsViewModel;
