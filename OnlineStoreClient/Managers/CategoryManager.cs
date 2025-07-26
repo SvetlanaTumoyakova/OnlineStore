@@ -1,4 +1,5 @@
-﻿using OnlineStoreClient.Model;
+﻿using OnlineStoreClient.Dto;
+using OnlineStoreClient.Model;
 
 namespace OnlineStoreClient.Managers
 {
@@ -67,7 +68,6 @@ namespace OnlineStoreClient.Managers
             var name = Console.ReadLine();
             var newCategory = new ProductCategory { Name = name };
             await _productCategoryClient.AddAsync(newCategory);
-            Console.WriteLine("Категория добавлена.");
         }
 
         private async Task UpdateCategoryAsync()
@@ -81,8 +81,8 @@ namespace OnlineStoreClient.Managers
                 {
                     Console.Write("Введите новое название категории: ");
                     existingCategory.Name = Console.ReadLine();
+
                     await _productCategoryClient.UpdateAsync(existingCategory);
-                    Console.WriteLine("Категория обновлена.");
                 }
                 else
                 {
@@ -101,7 +101,6 @@ namespace OnlineStoreClient.Managers
             if (int.TryParse(Console.ReadLine(), out int id))
             {
                 await _productCategoryClient.RemoveAsync(id);
-                Console.WriteLine("Категория удалена.");
             }
             else
             {

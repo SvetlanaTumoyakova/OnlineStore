@@ -143,7 +143,6 @@ namespace OnlineStoreClient.Managers
                     };
 
                     await _productClient.AddAsync(newProductDto);
-                    Console.WriteLine("Продукт добавлен.");
                 }
                 else
                 {
@@ -186,8 +185,7 @@ namespace OnlineStoreClient.Managers
                     {
                         updatedProductDto.Price = newPrice;
                     }
-                    await _productClient.UpdateAsync(updatedProductDto);
-                    Console.WriteLine("Продукт обновлен.");
+                    await _productClient.UpdateAsync(productDetails.Id, updatedProductDto);
                 }
                 else
                 {
@@ -206,7 +204,6 @@ namespace OnlineStoreClient.Managers
             if (int.TryParse(Console.ReadLine(), out int id))
             {
                 await _productClient.RemoveAsync(id);
-                Console.WriteLine("Продукт удален.");
             }
             else
             {

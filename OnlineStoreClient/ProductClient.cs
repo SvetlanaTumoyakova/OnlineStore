@@ -1,14 +1,9 @@
-﻿using OnlineStoreClient.Dto;
+﻿using OnlineStore.Validations;
+using OnlineStoreClient.Dto;
 using OnlineStoreClient.Model;
-using OnlineStoreClient.Validations;
 using OnlineStoreClient.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OnlineStoreClient
 {
@@ -36,29 +31,88 @@ namespace OnlineStoreClient
             return await _httpClient.GetFromJsonAsync<Product[]>($"api/products/{skip}/{take}");
         }
 
-        public async Task AddAsync(ProductDto ProductDto)
+        public async Task AddAsync(ProductDto productDto)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/products", ProductDto);
-            if(response.StatusCode == HttpStatusCode.BadRequest)
+            var validator = new ProductValidation();
+            var validationResult = await validator.ValidateAsync(productDto);
+
+            if (!validationResult.IsValid)
             {
-                var productDetailsVM = await response.Content.ReadFromJsonAsync<ValidateResult>();
+                var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                Console.WriteLine($"Ошибки валидации: {string.Join(", ", errors)}");
+                return;
+            }
+
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("api/products", productDto);
+
+                if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    var errorMessages = await response.Content.ReadFromJsonAsync<List<string>>();
+                    Console.WriteLine($"Ошибка валидации от сервера: {string.Join(", ", errorMessages)}");
+                }
+
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Произошла ошибка при добавлении товара: {ex.Message}");
             }
         }
 
-        public async Task UpdateAsync(ProductDto ProductDto)
+        public async Task UpdateAsync(int id, ProductDto productDto)
         {
-            var response = await _httpClient.PutAsJsonAsync("api/products", ProductDto);
-            if (response.StatusCode == HttpStatusCode.BadRequest)
+            var validator = new ProductValidation();
+            var validationResult = await validator.ValidateAsync(productDto);
+
+            if (!validationResult.IsValid)
             {
-                var productDetailsVM = await response.Content.ReadFromJsonAsync<ValidateResult>();
+                var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                Console.WriteLine($"Ошибки валидации: {string.Join(", ", errors)}");
+                return;
+            }
+
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"api/products/{id}", productDto);
+
+                if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    var errorMessages = await response.Content.ReadFromJsonAsync<List<string>>();
+                    Console.WriteLine($"Ошибка валидации от сервера: {string.Join(", ", errorMessages)}");
+                    return;
+                }
+
+                response.EnsureSuccessStatusCode();
+            }
+            catch (HttpRequestException)
+            {
+                Console.WriteLine("Ошибка сети при обновлении данных о товаре.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Произошла ошибка при обновлении данных о товаре: {ex.Message}");
             }
         }
         public async Task RemoveAsync(int id)
         {
-            var response = await _httpClient.DeleteAsync($"api/products/{id}");
-            if (response.StatusCode == HttpStatusCode.BadRequest)
+            try
             {
-                var productDetailsVM = await response.Content.ReadFromJsonAsync<ValidateResult>();
+                var response = await _httpClient.DeleteAsync($"api/products/{id}");
+
+                if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    var errorMessages = await response.Content.ReadFromJsonAsync<List<string>>();
+                    Console.WriteLine($"Ошибка при удалении товара: {string.Join(", ", errorMessages)}");
+                    return;
+                }
+
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Произошла ошибка при удалении товара.", ex);
             }
         }
     }

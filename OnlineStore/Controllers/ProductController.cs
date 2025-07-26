@@ -5,7 +5,6 @@ using OnlineStore.Dto;
 using OnlineStore.Exeptions;
 using OnlineStore.Mappers;
 using OnlineStore.Model;
-using OnlineStore.Validations;
 
 namespace OnlineStore.Controllers;
 
@@ -45,24 +44,22 @@ public class ProductController : Controller
     [HttpPost]
     public async Task<ActionResult> AddAsync(ProductDto productDto)
     {
-        var validateResult = ValidationProductDto.Validate(productDto);
-
-        if (!validateResult.IsValid)
-        {
-            return BadRequest(validateResult);
-        }
-
         try
         {
             var product = MapperProductDto.Map(productDto);
+
             await _productRepository.AddAsync(product);
+
+            return CreatedAtAction(nameof(AddAsync), new { product.Id }, productDto);
         }
         catch (NotFoundException)
         {
-            throw;
+            return BadRequest("Product not found.");
         }
-
-        return Created();
+        catch (Exception ex)
+        {
+            return BadRequest($"Error occurred: {ex.Message}");
+        }
     }
 
     [HttpDelete("{id}")]
@@ -83,12 +80,6 @@ public class ProductController : Controller
     [HttpPut("{id}")]
     public async Task<ActionResult<Product>> UpdateAsync(int id, ProductDto productDto)
     {
-        var validateResult = ValidationProductDto.Validate(productDto);
-        if (!validateResult.IsValid)
-        {
-            return BadRequest(validateResult);
-        }
-
         try
         {
             var existingProduct = await _productRepository.GetByIdAsync(id);
@@ -98,9 +89,10 @@ public class ProductController : Controller
             }
 
             var product = MapperProductDto.Map(productDto);
-            product.Id = existingProduct.Id; 
+            product.Id = existingProduct.Id;
 
             await _productRepository.UpdateAsync(product);
+
             return Ok(product);
         }
         catch (NotFoundException)

@@ -55,9 +55,9 @@ namespace OnlineStore.Data.Repositories
         {
             var isExist = await _dbContext.ProductCategories.AnyAsync(productCategory => productCategory.Id == product.ProductCategoryId);
 
-            if (isExist)
+            if (!isExist)
             {
-                throw new NotFoundException($"Entity {nameof(ProductCategory)} not found by id {id}");
+                throw new NotFoundException($"Entity {nameof(ProductCategory)} not found by id {product.Id}");
             }
 
             await _dbContext.AddAsync(product);
