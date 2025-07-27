@@ -5,8 +5,8 @@ namespace OnlineStore.Validations;
 
 public class ProductValidation : AbstractValidator<ProductDto>
 {
-    public const int MaxNameLength = 10;
-    public const int MaxDescriptionLength = 1024;
+    public const int MaxNameLength = 1024;
+    public const int MaxDescriptionLength = 2048;
 
     public ProductValidation()
     {

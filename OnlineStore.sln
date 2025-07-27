@@ -8,6 +8,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineStoreClient", "OnlineStoreClient\OnlineStoreClient.csproj", "{DE0C07B7-1A6D-429B-8CAA-44D0CD7CFF07}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineStore.UnitTests", "OnlineStore.UnitTests\OnlineStore.UnitTests.csproj", "{A8878FED-3786-4C97-95F7-AADE786BBAFA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DE0C07B7-1A6D-429B-8CAA-44D0CD7CFF07} = {DE0C07B7-1A6D-429B-8CAA-44D0CD7CFF07}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
